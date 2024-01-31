@@ -1,46 +1,79 @@
 package com.example.demo.controllers;
 
+import com.example.demo.dto.ClientDTO;
 import com.example.demo.models.Client;
-import com.example.demo.repository.ClientRepository;
+import com.example.demo.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("clients")
 public class ClientController {
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
+
+//    @GetMapping
+//    public String index() {
+//      return "Online";
+//    }
 
     @GetMapping
-    public String index() {
-      return "Online";
-    }
-
-    @GetMapping("clients")
     public List<Client> getClients() {
-        return clientRepository.findAll();
+        return clientService.getAll();
     }
 
-    @PostMapping("add")
-    public String post(@RequestBody Client client){
-        clientRepository.save(client);
-        return "New Client saved";
+    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getClientById (@PathVariable(name = "id") Long id){
+        Optional<Client> client = clientService.getById(id);
+        if(client.isPresent()){
+            return ResponseEntity.ok(new ClientDTO(client.get().getName(), client.get().getSurname(), client.get().getBirthday()));
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PutMapping("clients/{id}")
-    public String update(@PathVariable Long id, @RequestBody Client client){
-        Client updatedClient = clientRepository.findById(id).get();
-        updatedClient.setName(client.getName());
-        updatedClient.setEmail(client.getEmail());
-        clientRepository.save(updatedClient);
-        return "Client modified";
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> saveClient(@RequestBody Client client){
+        try {
+            Optional<Client> createdClient = clientService.save(client);
+            return ResponseEntity.created(URI.create("")).body(createdClient);
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Client has not created. . . ");
+        }
+
+
     }
 
-    @DeleteMapping("clients/{id}")
-    public String delete(@PathVariable Long id){
-        Client deletedClient = clientRepository.findById(id).get();
-        clientRepository.delete(deletedClient);
-        return "Client deleted";
+    @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> updateClient(@PathVariable(name = "id") Long id, @RequestBody Client client){
+        try{
+            Optional<Client> updatedClient = clientService.update(client, id);
+            return ResponseEntity.ok(updatedClient);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Client has not updated. . . ");
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        try{
+            Optional<Client> deletedClient = clientService.delete(id);
+            return ResponseEntity.ok(deletedClient);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Client has not deleted. . . ");
+        }
+
+
     }
 }
+
+//new ClientDTO(client.getName(), client.getSurname(), client.getBirthday())
