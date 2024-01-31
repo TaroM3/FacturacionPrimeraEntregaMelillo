@@ -18,11 +18,6 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-//    @GetMapping
-//    public String index() {
-//      return "Online";
-//    }
-
     @GetMapping
     public List<Client> getClients() {
         return clientService.getAll();
@@ -40,40 +35,34 @@ public class ClientController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> saveClient(@RequestBody Client client){
-        try {
+
             Optional<Client> createdClient = clientService.save(client);
-            return ResponseEntity.created(URI.create("")).body(createdClient);
-        }catch(Exception e){
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Client has not created. . . ");
-        }
-
-
+            if (createdClient.isPresent()) {
+                return ResponseEntity.created(URI.create("")).body(createdClient);
+            }else {
+                return ResponseEntity.internalServerError().body("Client has not created. . . ");
+            }
     }
 
     @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> updateClient(@PathVariable(name = "id") Long id, @RequestBody Client client){
-        try{
+
             Optional<Client> updatedClient = clientService.update(client, id);
-            return ResponseEntity.ok(updatedClient);
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Client has not updated. . . ");
-        }
+            if (updatedClient.isPresent()) {
+                return ResponseEntity.ok(updatedClient);
+            }else {
+                return ResponseEntity.internalServerError().body("Client has not updated. . . ");
+            }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
-        try{
+
             Optional<Client> deletedClient = clientService.delete(id);
-            return ResponseEntity.ok(deletedClient);
-        }catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Client has not deleted. . . ");
-        }
-
-
+            if (deletedClient.isPresent()){
+                return ResponseEntity.ok(deletedClient);
+            }else {
+                return ResponseEntity.internalServerError().body("Client has not deleted. . . ");
+            }
     }
 }
-
-//new ClientDTO(client.getName(), client.getSurname(), client.getBirthday())

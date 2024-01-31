@@ -2,29 +2,38 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.Product;
 import com.example.demo.repository.ProductRepository;
+import com.example.demo.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("products")
 public class ProductController {
-
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
-    @GetMapping("products")
+    @GetMapping
     public List<Product> getProducts() {
-        return productRepository.findAll();
+        return productService.getAll();
     }
 
-    @PostMapping("products")
-    public String post(@RequestBody Product product){
-        productRepository.save(product);
-        return "New product added";
+    @PostMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> post(@RequestBody Product product){
+        Optional<Product> createdProduct = productService.save(product);
+        if(createdProduct.isPresent()){
+            return ResponseEntity.created(URI.create("")).body(createdProduct);
+        }else {
+            return ResponseEntity.internalServerError().body("Product has not created. . . ");
+        }
     }
 
-    @PutMapping("products/{id}")
+    @PutMapping("/{id}")
     public String update(@PathVariable Long id, @RequestBody Product product){
         Product updatedProduct = productRepository.findById(id).get();
         updatedProduct.setTitle(product.getTitle());
@@ -35,7 +44,7 @@ public class ProductController {
         return "Product modified";
     }
 
-    @DeleteMapping("products/{id}")
+    @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id){
         Product deletedProduct = productRepository.findById(id).get();
         productRepository.delete(deletedProduct);
