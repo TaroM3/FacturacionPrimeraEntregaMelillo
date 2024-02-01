@@ -34,21 +34,20 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public String update(@PathVariable Long id, @RequestBody Product product){
-        Product updatedProduct = productRepository.findById(id).get();
-        updatedProduct.setTitle(product.getTitle());
-        updatedProduct.setStock(product.getStock());
-        updatedProduct.setPrice(product.getPrice());
-        updatedProduct.setDescription(product.getDescription());
-        updatedProduct.setCode(product.getCode());
-        return "Product modified";
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Product product){
+//        Product updatedProduct = productService.findById(id).get();
+//        updatedProduct.setTitle(product.getTitle());
+//        updatedProduct.setStock(product.getStock());
+//        updatedProduct.setPrice(product.getPrice());
+//        updatedProduct.setDescription(product.getDescription());
+//        updatedProduct.setCode(product.getCode());
+        return ResponseEntity.ok(product);
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id){
-        Product deletedProduct = productRepository.findById(id).get();
-        productRepository.delete(deletedProduct);
-        return "Product deleted";
+    public ResponseEntity<?> delete(@PathVariable Long id){
+
+        return ResponseEntity.ok("Product deleted. . . ");
     }
 
 }
