@@ -35,19 +35,22 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Product product){
-//        Product updatedProduct = productService.findById(id).get();
-//        updatedProduct.setTitle(product.getTitle());
-//        updatedProduct.setStock(product.getStock());
-//        updatedProduct.setPrice(product.getPrice());
-//        updatedProduct.setDescription(product.getDescription());
-//        updatedProduct.setCode(product.getCode());
-        return ResponseEntity.ok(product);
+        Optional<Product> updatedProduct = productService.update(product, id);
+        if (updatedProduct.isPresent()){
+            return ResponseEntity.ok(product);
+        }else {
+            return ResponseEntity.internalServerError().body("Product has not been updated. . . ");
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
-
-        return ResponseEntity.ok("Product deleted. . . ");
+        Optional<Product> deletedProduct = productService.delete(id);
+        if (deletedProduct.isPresent()){
+            return ResponseEntity.ok(deletedProduct);
+        }else {
+            return ResponseEntity.internalServerError().body("Product has not been deleted. . . ");
+        }
     }
 
 }

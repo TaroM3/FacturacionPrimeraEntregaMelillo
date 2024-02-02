@@ -40,7 +40,7 @@ public class ClientController {
             if (createdClient.isPresent()) {
                 return ResponseEntity.created(URI.create("")).body(createdClient);
             }else {
-                return ResponseEntity.internalServerError().body("Client has not created. . . ");
+                return ResponseEntity.internalServerError().body("Client has not been created. . . ");
             }
     }
 
@@ -51,7 +51,7 @@ public class ClientController {
             if (updatedClient.isPresent()) {
                 return ResponseEntity.ok(updatedClient);
             }else {
-                return ResponseEntity.internalServerError().body("Client has not updated. . . ");
+                return ResponseEntity.internalServerError().body("Client has not been updated. . . ");
             }
     }
 
@@ -62,7 +62,7 @@ public class ClientController {
             if (deletedClient.isPresent()){
                 return ResponseEntity.ok(deletedClient);
             }else {
-                return ResponseEntity.internalServerError().body("Client has not deleted. . . ");
+                return ResponseEntity.internalServerError().body("Client has not been deleted. . . ");
             }
     }
 }
