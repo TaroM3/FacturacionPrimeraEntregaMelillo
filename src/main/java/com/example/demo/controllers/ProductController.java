@@ -19,38 +19,28 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public List<Product> getProducts() {
+    public ResponseEntity<?> getProducts() {
         return productService.getAll();
+    }
+
+    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> getProductById(Long id){
+        return productService.getById(id);
     }
 
     @PostMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> post(@RequestBody Product product){
-        Optional<Product> createdProduct = productService.save(product);
-        if(createdProduct.isPresent()){
-            return ResponseEntity.created(URI.create("")).body(createdProduct);
-        }else {
-            return ResponseEntity.internalServerError().body("Product has not created. . . ");
-        }
+        return productService.save(product);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Product product){
-        Optional<Product> updatedProduct = productService.update(product, id);
-        if (updatedProduct.isPresent()){
-            return ResponseEntity.ok(product);
-        }else {
-            return ResponseEntity.internalServerError().body("Product has not been updated. . . ");
-        }
+        return productService.update(product, id);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
-        Optional<Product> deletedProduct = productService.delete(id);
-        if (deletedProduct.isPresent()){
-            return ResponseEntity.ok(deletedProduct);
-        }else {
-            return ResponseEntity.internalServerError().body("Product has not been deleted. . . ");
-        }
+        return productService.delete(id);
     }
 
 }
