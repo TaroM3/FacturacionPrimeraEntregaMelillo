@@ -15,6 +15,13 @@ public class SaleService {
     @Autowired
     private SaleRepository repository;
 
+    @Autowired
+    private ClientService clientService;
+
+    @Autowired
+    private ProductService productService;
+
+
     public ResponseEntity<?> getById(Long id) {
         Optional<Sale> sale = repository.findById(id);
         if (sale.isPresent()){

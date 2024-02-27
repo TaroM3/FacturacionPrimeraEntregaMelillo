@@ -7,18 +7,21 @@ CREATE TABLE coderhouse.clients (
     birthday DATE
 );
 
-CREATE TABLE coderhouse.products (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(50),
-    description VARCHAR(100),
-    code VARCHAR(50),
-    stock INT,
-    price DOUBLE
+CREATE TABLE coderhouse.sale (
+  id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  created_at datetime(6) NOT NULL,
+  quantity int(11) NOT NULL,
+  total double NOT NULL,
+  client_id INT NOT NULL,
+  KEY `FK_client_id` (client_id),
+  CONSTRAINT `FK_client_id` FOREIGN KEY (client_id) REFERENCES clients (id)
 );
 
-CREATE TABLE coderhouse.sales (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    client_id INT,
-    created_at DATETIME,
-    total DOUBLE
+CREATE TABLE coderhouse.sale_product (
+  sale_id INT NOT NULL,
+  product_id INT NOT NULL,
+  KEY `FK_sale_id` (sale_id),
+  KEY `FK_product_id` (product_id),
+  CONSTRAINT `FK_sale_id` FOREIGN KEY (sale_id) REFERENCES sales (id),
+  CONSTRAINT `FK_product_id` FOREIGN KEY (product_id) REFERENCES products (id)
 );

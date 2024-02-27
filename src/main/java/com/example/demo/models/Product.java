@@ -29,6 +29,6 @@ public class Product {
     private Long stock;
 
     @Column
-    private Double price;
+    private double price;
 
 }
